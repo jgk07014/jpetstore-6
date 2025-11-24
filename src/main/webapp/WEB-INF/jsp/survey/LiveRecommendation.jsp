@@ -1,21 +1,22 @@
 <%--
+
        Copyright 2010-2025 the original author or authors.
+
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
        You may obtain a copy of the License at
+
           https://www.apache.org/licenses/LICENSE-2.0
+
        Unless required by applicable law or agreed to in writing, software
        distributed under the License is distributed on an "AS IS" BASIS,
        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
        See the License for the specific language governing permissions and
        limitations under the License.
+
 --%>
 <%@ include file="../common/IncludeTop.jsp"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
-<button class="compare-btn-fixed" id="compareBtn" onclick="openComparisonPopup()" disabled>
-    Compare
-</button>
 
 <div id="Catalog">
 
@@ -30,6 +31,28 @@
             <div class="Message">No recommendations available.</div>
         </c:if>
         <c:if test="${not empty actionBean.recommendedItems}">
+
+        <div class="table-container"
+             style="
+                 position: relative;
+                 width: max-content;
+                 margin: 0 auto;
+             ">
+
+            <!-- ★ Compare 버튼: 표 오른쪽 끝에 정확히 붙음 ★ -->
+            <button id="compareBtn"
+                    class="compare-btn-fixed"
+                    disabled
+                    onclick="openComparisonPopup()"
+                    style="
+                        position:absolute;
+                        top:-35px;
+                        right:0;
+                    ">
+                Compare
+            </button>
+
+
             <table class="itemList"> <tr>
                 <th>Item ID</th>
                 <th>Product ID</th>
