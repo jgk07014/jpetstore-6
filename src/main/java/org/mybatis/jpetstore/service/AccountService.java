@@ -1,5 +1,5 @@
 /*
- *    Copyright 2010-2022 the original author or authors.
+ *    Copyright 2010-2025 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class AccountService {
     accountMapper.insertAccount(account);
     accountMapper.insertProfile(account);
     accountMapper.insertSignon(account);
-    triggerRecommendationRefresh(account.getUsername());
+    triggerRecommendationRefresh(account);
   }
 
   /**
@@ -75,26 +75,62 @@ public class AccountService {
 
     Optional.ofNullable(account.getPassword()).filter(password -> password.length() > 0)
         .ifPresent(password -> accountMapper.updateSignon(account));
-    triggerRecommendationRefresh(account.getUsername());
+
+    // Note: Recommendation refresh is handled in AccountActionBean.editAccount()
+    // after the transaction commits to ensure we have the latest data
   }
 
-  private void triggerRecommendationRefresh(String username) {
-    Optional<Account> latestAccount = Optional.ofNullable(username).map(accountMapper::getAccountByUsername);
-    if (!latestAccount.isPresent()) {
+  /**
+   * Refresh recommendation messages for an account. This should be called after updateAccount() to ensure
+   * recommendations are regenerated.
+   *
+   * @param username
+   *          the username to refresh recommendations for
+   */
+  public void refreshRecommendationsForUser(String username) {
+    if (username == null) {
       return;
     }
 
-    Account accountSnapshot = latestAccount.get();
+    // Fetch the latest account data from DB
+    Account latestAccount = accountMapper.getAccountByUsername(username);
+    if (latestAccount != null) {
+      recommendationMessageService.refreshRecommendations(latestAccount);
+    }
+  }
+
+  private void triggerRecommendationRefresh(Account account) {
+    if (account == null || account.getUsername() == null) {
+      return;
+    }
+
+    // Create a copy of the account to avoid issues with transaction state
+    Account accountSnapshot = new Account();
+    accountSnapshot.setUsername(account.getUsername());
+    accountSnapshot.setResidenceEnv(account.getResidenceEnv());
+    accountSnapshot.setCarePeriod(account.getCarePeriod());
+    accountSnapshot.setPetColorPref(account.getPetColorPref());
+    accountSnapshot.setPetSizePref(account.getPetSizePref());
+    accountSnapshot.setActivityTime(account.getActivityTime());
+    accountSnapshot.setDietManagement(account.getDietManagement());
 
     if (TransactionSynchronizationManager.isSynchronizationActive()) {
       TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
         @Override
         public void afterCommit() {
-          recommendationMessageService.refreshRecommendationsAsync(accountSnapshot);
+          // After commit, fetch the latest account data from DB to ensure we have the most up-to-date information
+          Account latestAccount = accountMapper.getAccountByUsername(accountSnapshot.getUsername());
+          if (latestAccount != null) {
+            recommendationMessageService.refreshRecommendations(latestAccount);
+          } else {
+            // Fallback to snapshot if DB fetch fails
+            recommendationMessageService.refreshRecommendations(accountSnapshot);
+          }
         }
       });
     } else {
-      recommendationMessageService.refreshRecommendationsAsync(accountSnapshot);
+      // If no transaction, use the account directly
+      recommendationMessageService.refreshRecommendations(accountSnapshot);
     }
   }
 

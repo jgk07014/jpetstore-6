@@ -46,7 +46,7 @@ public class CatalogService {
   private static final double WEIGHT_DIET_MANAGEMENT = 1.0; // Moderate (10%)
   private static final double WEIGHT_ACTIVITY_TIME = 1.0; // Moderate (10%)
   private static final double WEIGHT_PET_COLOR_PREF = 1.0; // Least important (10%)
-  private static final double RECOMMENDATION_THRESHOLD = 6.5; // 65% of total weight (10.0)
+  private static final double RECOMMENDATION_THRESHOLD = 7.5; // 75% of total weight (10.0) - stricter criteria
 
   private final CategoryMapper categoryMapper;
   private final ItemMapper itemMapper;
@@ -185,6 +185,14 @@ public class CatalogService {
         return false;
       }
       String categoryId = product.getCategoryId();
+
+      // Logic check: Fish products (FI-FW-*, FI-SW-*) should not be recommended for Dry environment
+      if (residenceEnv != null && residenceEnv.trim().equals("Dry environment")) {
+        if (productId.startsWith("FI-FW-") || productId.startsWith("FI-SW-")) {
+          System.out.println("=== Fish product " + productId + " excluded for Dry environment ===");
+          return false;
+        }
+      }
 
       // Get all survey recommendations
       List<SurveyRecommendation> allRecommendations = surveyRecommendationMapper.getSurveyRecommendations();

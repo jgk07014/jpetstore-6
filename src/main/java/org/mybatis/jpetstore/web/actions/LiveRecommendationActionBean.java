@@ -85,6 +85,8 @@ public class LiveRecommendationActionBean extends AbstractActionBean {
     account = accountBean.getAccount();
 
     // Look up precomputed recommendations from SURVEY_RECOMMENDATIONS
+    // This uses exact match (all 6 conditions must match exactly)
+    // This is separate from the weighted scoring used in Category.jsp popup
     logger.info(
         "Requesting recommendation for account survey: residenceEnv='{}', carePeriod='{}', petColorPref='{}', petSizePref='{}', activityTime='{}', dietManagement='{}'",
         account.getResidenceEnv(), account.getCarePeriod(), account.getPetColorPref(), account.getPetSizePref(),
