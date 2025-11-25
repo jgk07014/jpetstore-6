@@ -101,7 +101,7 @@
                 </td>
                 <td>${item.product.productId}</td>
                 <td>${item.attribute1} ${item.attribute2} ${item.attribute3}
-                        ${item.attribute4} ${item.attribute5} ${actionBean.product.name}</td>
+                        ${item.attribute4} ${item.attribute5} ${item.product.name}</td>
                 <td><fmt:formatNumber value="${item.listPrice}"
                                       pattern="$#,##0.00" /></td>
                 <td><stripes:link class="Button"

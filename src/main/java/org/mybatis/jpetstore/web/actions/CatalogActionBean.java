@@ -155,7 +155,6 @@ public class CatalogActionBean extends AbstractActionBean {
     if ("ALL".equals(categoryId)) {
       itemList = catalogService.getAllItemList();
       product = new Product();
-      product.setName("ALL Products");
       product.setCategoryId("ALL");
       return new ForwardResolution(VIEW_PRODUCT);
       // 이건 세부 품목이 아니라 상품 분류를 전부 가져오는 기능이었음;; ex) 작은물고기, 중간물고기, 큰물고기(X), 물고기 (O)
