@@ -13,6 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+// ./mvnw compile
+// ./mvnw exec:java -Dexec.mainClass=\"org.mybatis.jpetstore.util.RecommendationDataGenerator\
 package org.mybatis.jpetstore.util;
 
 import java.io.IOException;

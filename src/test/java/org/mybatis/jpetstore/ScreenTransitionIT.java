@@ -1,5 +1,5 @@
 /*
- *    Copyright 2010-2022 the original author or authors.
+ *    Copyright 2010-2025 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -99,8 +99,7 @@ class ScreenTransitionIT {
     $(By.linkText("Add to Cart")).click();
     $(By.cssSelector("#Catalog h2")).shouldBe(text("Shopping Cart"));
 
-    // Add a item to the cart
-    $(By.cssSelector("#QuickLinks a:nth-of-type(5)")).click();
+    $(By.cssSelector("#QuickLinks a:nth-of-type(6)")).click();
     $(By.linkText("AV-CB-01")).click();
     $(By.linkText("EST-18")).click();
     $(By.linkText("Add to Cart")).click();
@@ -348,24 +347,28 @@ class ScreenTransitionIT {
     $(By.linkText("Enter the Store")).click();
     $(By.id("WelcomeContent")).shouldBe(empty);
 
-    // Move to Fish category
+    // Move to ALL Products category (new first link)
     $(By.cssSelector("#QuickLinks a:nth-of-type(1)")).click();
+    $(By.cssSelector("#Catalog h2")).shouldBe(text("ALL Products"));
+
+    // Move to Fish category (now second link)
+    $(By.cssSelector("#QuickLinks a:nth-of-type(2)")).click();
     $(By.cssSelector("#Catalog h2")).shouldBe(text("Fish"));
 
-    // Move to Dogs category
-    $(By.cssSelector("#QuickLinks a:nth-of-type(2)")).click();
+    // Move to Dogs category (now third link)
+    $(By.cssSelector("#QuickLinks a:nth-of-type(3)")).click();
     $(By.cssSelector("#Catalog h2")).shouldBe(text("Dogs"));
 
-    // Move to Reptiles category
-    $(By.cssSelector("#QuickLinks a:nth-of-type(3)")).click();
+    // Move to Reptiles category (now fourth link)
+    $(By.cssSelector("#QuickLinks a:nth-of-type(4)")).click();
     $(By.cssSelector("#Catalog h2")).shouldBe(text("Reptiles"));
 
-    // Move to Cats category
-    $(By.cssSelector("#QuickLinks a:nth-of-type(4)")).click();
+    // Move to Cats category (now fifth link)
+    $(By.cssSelector("#QuickLinks a:nth-of-type(5)")).click();
     $(By.cssSelector("#Catalog h2")).shouldBe(text("Cats"));
 
-    // Move to Birds category
-    $(By.cssSelector("#QuickLinks a:nth-of-type(5)")).click();
+    // Move to Birds category (now sixth link)
+    $(By.cssSelector("#QuickLinks a:nth-of-type(6)")).click();
     $(By.cssSelector("#Catalog h2")).shouldBe(text("Birds"));
   }
 
