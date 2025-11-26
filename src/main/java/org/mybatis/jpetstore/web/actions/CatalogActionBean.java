@@ -72,6 +72,7 @@ public class CatalogActionBean extends AbstractActionBean {
   private Map<String, Boolean> productRecommendationMap;
   private Map<String, String> productRecommendationMessageMap;
   private boolean userCompletedSurvey;
+  private RecommendationMessage productRecommendationMessage;
 
   public String getKeyword() {
     return keyword;
@@ -173,6 +174,10 @@ public class CatalogActionBean extends AbstractActionBean {
     return userCompletedSurvey;
   }
 
+  public RecommendationMessage getProductRecommendationMessage() {
+    return productRecommendationMessage;
+  }
+
   @DefaultHandler
   public ForwardResolution viewMain() {
     return new ForwardResolution(MAIN);
@@ -247,6 +252,7 @@ public class CatalogActionBean extends AbstractActionBean {
     if (productId != null) {
       itemList = catalogService.getItemListByProduct(productId);
       product = catalogService.getProduct(productId);
+      productRecommendationMessage = resolveRecommendationMessage(productId);
     }
     return new ForwardResolution(VIEW_PRODUCT);
   }
@@ -294,6 +300,26 @@ public class CatalogActionBean extends AbstractActionBean {
     itemId = null;
     item = null;
     itemList = null;
+    productRecommendationMessage = null;
+  }
+
+  private RecommendationMessage resolveRecommendationMessage(String currentProductId) {
+    if (currentProductId == null) {
+      return null;
+    }
+    HttpSession session = context.getRequest().getSession(false);
+    if (session == null) {
+      return null;
+    }
+    AccountActionBean accountBean = (AccountActionBean) session.getAttribute("accountBean");
+    if (accountBean == null || !accountBean.isAuthenticated() || accountBean.getAccount() == null) {
+      return null;
+    }
+    Account account = accountBean.getAccount();
+    if (!catalogService.hasCompletedSurvey(account)) {
+      return null;
+    }
+    return recommendationMessageService.getRecommendationMessage(account.getUsername(), currentProductId);
   }
 
 }

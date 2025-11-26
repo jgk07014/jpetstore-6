@@ -140,4 +140,12 @@ public class RecommendationMessageService {
 
     return messages.stream().collect(Collectors.toMap(RecommendationMessage::getProductId, Function.identity()));
   }
+
+  @Transactional(readOnly = true)
+  public RecommendationMessage getRecommendationMessage(String username, String productId) {
+    if (username == null || productId == null) {
+      return null;
+    }
+    return recommendationMessageMapper.getMessage(username, productId);
+  }
 }

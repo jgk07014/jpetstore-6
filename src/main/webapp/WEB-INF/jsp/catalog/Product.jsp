@@ -70,7 +70,24 @@
                         <%-- 이미지 팝업 --%>
                         <div class="image-popup">
                             <img src="/jpetstore/images/placeholder.gif" alt="Item Image" />
-                            <div class="recommend-text"></div>
+                            <div class="recommend-text">
+                                <c:choose>
+                                    <c:when test="${not empty actionBean.productRecommendationMessage}">
+                                        <div class="ai-copy ${actionBean.productRecommendationMessage.recommended ? 'RECOMMEND' : 'NOT_RECOMMEND'}">
+                                            <div class="ai-copy-body">
+                                                ${actionBean.productRecommendationMessage.message}
+                                            </div>
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:if test="${sessionScope.accountBean.authenticated}">
+                                            <div class="ai-copy neutral">
+                                                설문 답변을 반영한 추천 문구를 준비하는 중입니다.
+                                            </div>
+                                        </c:if>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
                         </div>
 
                         <%-- 데이터 숨김 (이미지 경로용) --%>
@@ -111,60 +128,26 @@
     document.addEventListener('DOMContentLoaded', function() {
         const links = document.querySelectorAll('.item-link');
 
-        // ★★★ 4. [안전장치] 데이터가 없어도 스크립트가 죽지 않도록 수정 ★★★
-        // 세션 데이터가 있으면 쓰고, 없으면 빈 배열 [] 사용
-        let recommendedIds = [];
-        try {
-            // JSP EL이 빈 문자열을 출력할 경우를 대비해 따옴표로 감싸고 파싱 시도
-            const jsonStr = '${sessionScope.recommendationJson}';
-            if (jsonStr && jsonStr.trim() !== '') {
-                recommendedIds = JSON.parse(jsonStr);
-            }
-        } catch (e) {
-            console.log('No recommendation data or parse error:', e);
-        }
-
-        // JSON이 객체 배열([{"productId":"..."}]) 형태일 경우 ID만 추출하는 로직 추가
-        if (recommendedIds.length > 0 && typeof recommendedIds[0] === 'object') {
-            recommendedIds = recommendedIds.map(item => item.productId);
-        }
-
         links.forEach(link => {
             const popup = link.querySelector('.image-popup');
             const dataSpan = link.querySelector('.popup-data');
-            const imgTag = popup.querySelector('img');
-            const recommendDiv = popup.querySelector('.recommend-text');
+            const imgTag = popup ? popup.querySelector('img') : null;
 
             if (popup && dataSpan && imgTag) {
                 // 이미지 설정
                 const description = dataSpan.innerHTML;
                 imgTag.src = extractImagePath(description);
-
-                // 추천 배지 설정
-                const currentItemId = dataSpan.getAttribute('data-id');
-
-                // 안전하게 문자열 포함 여부 확인
-                let isRecommended = false;
-                if (Array.isArray(recommendedIds)) {
-                    // ID가 포함되어 있는지 확인
-                    isRecommended = recommendedIds.includes(currentItemId);
-                }
-
-                if (isRecommended) {
-                    recommendDiv.innerHTML = '<div class="recommend-badge" style="background:#dff0d8; color:#3c763d; padding:5px; margin-top:5px; border-radius:4px; font-weight:bold;">👍 AI 추천 상품</div>';
-                } else {
-                    // 추천 아님 (비워두기)
-                    recommendDiv.innerHTML = '';
-                }
             }
 
             // 마우스 오버 이벤트
-            link.addEventListener('mouseenter', function() {
-                popup.style.display = 'block';
-            });
-            link.addEventListener('mouseleave', function() {
-                popup.style.display = 'none';
-            });
+            if (link && popup) {
+                link.addEventListener('mouseenter', function() {
+                    popup.style.display = 'block';
+                });
+                link.addEventListener('mouseleave', function() {
+                    popup.style.display = 'none';
+                });
+            }
         });
     });
 </script>
