@@ -1,5 +1,5 @@
 /*
- *    Copyright 2010-2022 the original author or authors.
+ *    Copyright 2010-2025 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.action.ForwardResolution;
+import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.SessionScope;
 import net.sourceforge.stripes.integration.spring.SpringBean;
@@ -77,7 +78,7 @@ public class CartActionBean extends AbstractActionBean {
       cart.addItem(item, isInStock);
     }
 
-    return new ForwardResolution(VIEW_CART);
+    return new RedirectResolution(CartActionBean.class, "viewCart");
   }
 
   /**
@@ -93,7 +94,7 @@ public class CartActionBean extends AbstractActionBean {
       setMessage("Attempted to remove null CartItem from Cart.");
       return new ForwardResolution(ERROR);
     } else {
-      return new ForwardResolution(VIEW_CART);
+      return new RedirectResolution(CartActionBean.class, "viewCart");
     }
   }
 
@@ -120,7 +121,7 @@ public class CartActionBean extends AbstractActionBean {
       }
     }
 
-    return new ForwardResolution(VIEW_CART);
+    return new RedirectResolution(CartActionBean.class, "viewCart");
   }
 
   public ForwardResolution viewCart() {
