@@ -17,7 +17,11 @@
 --%>
 <%@ include file="../common/IncludeTop.jsp"%>
 
-<div id="Catalog"><stripes:form
+<div id="Catalog">
+    <div style="color: red; font-weight: bold; margin-bottom: 10px;">
+        <stripes:errors />
+    </div>
+    <stripes:form
 	beanclass="org.mybatis.jpetstore.web.actions.AccountActionBean"
 	focus="username">
 

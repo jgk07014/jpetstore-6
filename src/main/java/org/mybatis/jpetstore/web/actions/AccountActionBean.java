@@ -35,6 +35,9 @@ import org.mybatis.jpetstore.domain.Product;
 import org.mybatis.jpetstore.service.AccountService;
 import org.mybatis.jpetstore.service.CatalogService;
 import org.springframework.dao.DuplicateKeyException;
+import net.sourceforge.stripes.validation.ValidationMethod;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.SimpleError;
 
 /**
  * The Class AccountActionBean.
@@ -417,5 +420,31 @@ public class AccountActionBean extends AbstractActionBean {
     }
     return password.equals(repeatedPassword == null ? "" : repeatedPassword);
   }
+
+    /**
+     * 설문조사 필수 입력 검증 (Custom Validation)
+     * Stripes 프레임워크가 이 메서드를 자동으로 호출하여 체크합니다.
+     */
+    @ValidationMethod(on = {"newAccount", "editAccount"})
+    public void validateSurvey(ValidationErrors errors) {
+        if (account.getResidenceEnv() == null || account.getResidenceEnv().trim().isEmpty()) {
+            errors.add("account.residenceEnv", new SimpleError("Living Environment is required."));
+        }
+        if (account.getCarePeriod() == null || account.getCarePeriod().trim().isEmpty()) {
+            errors.add("account.carePeriod", new SimpleError("Care Period is required."));
+        }
+        if (account.getPetColorPref() == null || account.getPetColorPref().trim().isEmpty()) {
+            errors.add("account.petColorPref", new SimpleError("Pet Color Preference is required."));
+        }
+        if (account.getPetSizePref() == null || account.getPetSizePref().trim().isEmpty()) {
+            errors.add("account.petSizePref", new SimpleError("Pet Size Preference is required."));
+        }
+        if (account.getActivityTime() == null || account.getActivityTime().trim().isEmpty()) {
+            errors.add("account.activityTime", new SimpleError("Activity Time is required."));
+        }
+        if (account.getDietManagement() == null || account.getDietManagement().trim().isEmpty()) {
+            errors.add("account.dietManagement", new SimpleError("Diet Management is required."));
+        }
+    }
 
 }
