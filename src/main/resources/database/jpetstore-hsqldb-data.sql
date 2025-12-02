@@ -56,12 +56,12 @@ create table PROFILE (
     mylistopt int,
     banneropt int,
     <!--new field-->
-    residence_env varchar(100),
-    care_period varchar(100),
-    pet_color_pref varchar(100),
-    pet_size_pref varchar(100),
-    activity_time varchar(100),
-    diet_management varchar(100),
+    residence_env varchar(255),
+    care_period varchar(255),
+    pet_color_pref varchar(255),
+    pet_size_pref varchar(255),
+    activity_time varchar(255),
+    diet_management varchar(255),
     constraint pk_profile primary key (userid)
 );
 
